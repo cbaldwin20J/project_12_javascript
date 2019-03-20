@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1 Spotify success page
+  p Welcome to #{soundtrack_object.name}
+  p album type: #{soundtrack_object.album_type}
+  p artist: #{soundtrack_object.artists[0].name}
+  p release date: #{soundtrack_object.release_date}
+  p total tracks: #{soundtrack_object.total_tracks}
+  d
+    p album image:
+    img(src="" + soundtrack_object.images[0].url + "" alt="Image Title")
+

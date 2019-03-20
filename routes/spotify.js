@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const url = require('url');
+
+const axios = require('axios');
 
 
 
@@ -68,7 +71,7 @@ router.get('/callback', function(req, res) {
 
   if (state === null || state !== storedState) {
     // ****************** need to update this to http://localhost:3000 or whatever express? is
-    res.send(500);
+    res.render("error_page");
   } else {
     res.clearCookie(stateKey);
     var authOptions = {
@@ -96,14 +99,23 @@ router.get('/callback', function(req, res) {
         //res.json({access_token, refresh_token})
         console.log("access_token: " + access_token)
         console.log("refresh_token: " + refresh_token)
-        res.render("erase", {access_token, refresh_token});
+
+        let erase1 = "soundgarden"
+        let erase2 = "rules"
+
+        let the_query = "/home/"+access_token+"/"+refresh_token
+        //res.render("index", {access_token, refresh_token});
+        res.redirect(the_query)
+
+
+
 
 
         // we can also pass the token to the browser to make requests from there
         // **** I don't think I need this because I'm not making api calls from redux
 
       } else {
-        res.send(501, error);
+        res.render("error");
 
       }
     });
@@ -131,20 +143,28 @@ router.get('/refresh_token/:refresh_token', function(req, res) {
     if (!error && response.statusCode === 200) {
       var access_token = body.access_token;
       // here we want to send our access token to redux using json
-      res.render("erase", {access_token, refresh_token});
+      res.redirect("/home", {access_token, refresh_token});
 
     }
   });
 });
 
+router.get('/erase/:access?/:refresh?', (req, res) => {
+  let access_token = req.params.access
+  let refresh_token = req.params.refresh
+  res.render("index", {access_token, refresh_token})
+})
 
-router.get('/:movie_query', (req, res) => {
 
-  let token = req.params.access_token
+
+router.get('/movie/:access', (req, res) => {
+
+  let token = req.params.access
+  movie_query = req.query.title
 
   axios({
       method: 'get',
-        url: "https://api.spotify.com/v1/search?q=album%3A" + req.params.movie_query + "&type=album&market=us&limit=1",
+        url: "https://api.spotify.com/v1/search?q=album%3A" + movie_query + "&type=album&market=us&limit=1",
         headers: {
                     "Accept": "application/json",
                     "Content-Type": "application/json",
@@ -154,7 +174,7 @@ router.get('/:movie_query', (req, res) => {
   })
     .then(response => {
       let soundtrack_object = response.data.albums.items[0]
-      res.json(soundtrack_object)
+      res.render('movie', {soundtrack_object})
     })
     .catch(error => {
       console.log("spotify error was made")

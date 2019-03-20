@@ -7,6 +7,7 @@
     "nodemon": "nodemon ./bin/www"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.16.0",
@@ -16,6 +17,7 @@
     "nodemon": "^1.18.10",
     "pug": "2.0.0-beta11",
     "querystring": "^0.2.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "url": "^0.11.0"
   }
 }

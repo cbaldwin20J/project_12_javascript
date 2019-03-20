@@ -3,3 +3,12 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  p Access Token: #{access_token}
+  p Refresh Toke: #{refresh_token}
+
+  h3 Get Data By Title
+  form(action="/spotify/movie/" + access_token, method="get")
+    div(class="input")
+      label(for="title") Title
+      input(type="text", id="title", name="title")
+    button(type="submit") LOAD
