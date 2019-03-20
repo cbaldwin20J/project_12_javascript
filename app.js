@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var spotifyRouter = require('./routes/spotify');
+var movieDBRouter = require('./routes/moviedb');
 
 
 mongoose.connect("mongodb://localhost:27017/course-api", {autoReconnect: true}, (err) => {
@@ -38,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/home', indexRouter);
 app.use('/users', usersRouter);
 app.use('/spotify', spotifyRouter);
+app.use('/moviedb', movieDBRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
