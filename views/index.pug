@@ -1,14 +1,17 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  p Access Token: #{access_token}
-  p Refresh Toke: #{refresh_token}
+  .container
+      .jumbotron.mt-5
+        h1.display-4 Welcome!
+        p.lead Type in the name of a movie to get the soundtrack and movie information
+        hr.my-4
+        form(action="/spotify/movie/" + access_token, method="get")
+          label(for='title') Enter a movie name
+          .input-group.mb-3
+            .input-group-prepend
+              span#basic-addon3.input-group-text Ex: Godzilla
+            input#title.form-control(type="text", name="title", aria-describedby='basic-addon3')
+          input.btn.btn-primary.btn-lg(type='submit', value='Submit')
 
-  h3 Get Data By Title
-  form(action="/spotify/movie/" + access_token, method="get")
-    div(class="input")
-      label(for="title") Title
-      input(type="text", id="title", name="title")
-    button(type="submit") LOAD
+
