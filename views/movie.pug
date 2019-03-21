@@ -1,26 +1,29 @@
 extends layout
 
 block content
-  h1 Spotify success page
-  a(href='/home') Do another search
 
-  p album cover:
-  img(src="" + soundtrack_object.images[0].url + "" alt="album image")
-
-  p The soundtrack name: #{soundtrack_object.name}
-  p album type: #{soundtrack_object.album_type}
-  p artist: #{soundtrack_object.artists[0].name}
-  p release date: #{soundtrack_object.release_date}
-  p total tracks: #{soundtrack_object.total_tracks}
-  a(href="" + soundtrack_object.external_urls.spotify) listen to the tracks on spotify
-
-  p movie poster:
-  img(src="http://image.tmdb.org/t/p/w185/" + the_data.poster_path alt="movie poster")
-
-
-  p vote count on the movie: #{the_data.vote_count}
-  p the movie's vote average: #{the_data.vote_count}
-  p movie popularity: #{the_data.popularity}
-  p movie summary: #{the_data.overview}
-  p movie release data: #{the_data.release_date}
-
+  .container
+        h1.mt-4.py-3.px-2.bg-success.text-center Your results
+        a.btn.btn-primary.mt-3(href='/home', role='button') Do another search
+        .modal-body.row.mt-4
+          .col-md-6
+            // Your first column here
+            h5 Album Cover:
+            img.rounded.mx-auto.d-block.w-50(src="" + soundtrack_object.images[0].url + "" alt="album image")
+            h5.py-3 The soundtrack name: #{soundtrack_object.name}
+            h5.py-3.px-1.bg-info album type: #{soundtrack_object.album_type}
+            h5.py-3 artist: #{soundtrack_object.artists[0].name}
+            h5.py-3.px-1.bg-info release date: #{soundtrack_object.release_date}
+            h5.py-3 total tracks: #{soundtrack_object.total_tracks}
+            a.btn.btn-outline-warning.py-3(href="" + soundtrack_object.external_urls.spotify, role='button') Listen to the tracks on spotify
+          .col-md-6
+            // Your second column here
+            h5 Movie Poster:
+            img.rounded.mx-auto.d-block.w-50(src="http://image.tmdb.org/t/p/w185/" + the_data.poster_path alt="movie poster")
+            h5.py-3 vote count on the movie from themoviedb.org: #{the_data.vote_count}
+            h5.py-3.px-1.bg-info the movie's vote average: #{the_data.vote_count}
+            h5.py-3 movie popularity: #{the_data.popularity}
+            h5.py-3.px-1.bg-info movie summary:
+            p
+              | #{the_data.overview}
+            h5.py-3.px-1.bg-info movie release date: #{the_data.release_date}
