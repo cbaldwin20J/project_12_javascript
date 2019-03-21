@@ -2,28 +2,73 @@ extends layout
 
 block content
 
-  .container
-        h1.mt-4.py-3.px-2.bg-success.text-center Your results
-        a.btn.btn-primary.mt-3(href='/home', role='button') Do another search
-        .modal-body.row.mt-4
-          .col-md-6
-            // Your first column here
-            h5 Album Cover:
-            img.rounded.mx-auto.d-block.w-50(src="" + soundtrack_object.images[0].url + "" alt="album image")
-            h5.py-3 The soundtrack name: #{soundtrack_object.name}
-            h5.py-3.px-1.bg-info album type: #{soundtrack_object.album_type}
-            h5.py-3 artist: #{soundtrack_object.artists[0].name}
-            h5.py-3.px-1.bg-info release date: #{soundtrack_object.release_date}
-            h5.py-3 total tracks: #{soundtrack_object.total_tracks}
-            a.btn.btn-outline-warning.py-3(href="" + soundtrack_object.external_urls.spotify, role='button') Listen to the tracks on spotify
-          .col-md-6
-            // Your second column here
-            h5 Movie Poster:
-            img.rounded.mx-auto.d-block.w-50(src="http://image.tmdb.org/t/p/w185/" + the_data.poster_path alt="movie poster")
-            h5.py-3 vote count on the movie from themoviedb.org: #{the_data.vote_count}
-            h5.py-3.px-1.bg-info the movie's vote average: #{the_data.vote_count}
-            h5.py-3 movie popularity: #{the_data.popularity}
-            h5.py-3.px-1.bg-info movie summary:
-            p
-              | #{the_data.overview}
-            h5.py-3.px-1.bg-info movie release date: #{the_data.release_date}
+
+
+
+    .container
+          h1.mt-4.py-3.px-2.text-center.display-4 Your results
+          a.btn.btn-outline-primary.mt-3.ml-5(href='/home', role='button') Do another search
+          .modal-body.row.mt-4
+            .col-md-6
+              // Your first column here
+              .card
+                .card-header
+                  | Soundtrack
+                .card-body
+                  h5 Album Cover:
+                  img.rounded.mx-auto.d-block.w-50(src="" + soundtrack_object.images[0].url + "" alt="album image")
+                  ul.list-group.list-group-flush
+                    li.list-group-item
+                      dl
+                        dt The soundtrack name
+                        dd - #{soundtrack_object.name}
+                    li.list-group-item
+                      dl
+                        dt album type
+                        dd - #{soundtrack_object.album_type}
+                    li.list-group-item
+                      dl
+                        dt artist
+                        dd - #{soundtrack_object.artists[0].name}
+                    li.list-group-item
+                      dl
+                        dt release date
+                        dd - #{soundtrack_object.release_date}
+                    li.list-group-item
+                      dl
+                        dt total tracks
+                        dd - #{soundtrack_object.total_tracks}
+                    li.list-group-item
+                      a.btn.btn-outline-warning.py-3(href="" + soundtrack_object.external_urls.spotify, role='button') Listen to the tracks on spotify
+            .col-md-6
+              // Your second column here
+              .card
+                .card-header
+                  | Movie
+                .card-body
+                  h5 Movie Poster:
+                  img.rounded.mx-auto.d-block.w-50(src="http://image.tmdb.org/t/p/w185/" + the_data.poster_path alt="movie poster")
+                  ul.list-group.list-group-flush
+                    li.list-group-item
+                      dl
+                        dt vote count on the movie from themoviedb.org
+                        dd - #{the_data.vote_count}
+                    li.list-group-item
+                      dl
+                        dt the movie's vote average
+                        dd - #{the_data.vote_average}
+                    li.list-group-item
+                      dl
+                        dt movie popularity
+                        dd - #{the_data.popularity}
+                    li.list-group-item
+                      dl
+                        dt movie summary
+                        dd
+                          | - #{the_data.overview}
+                    li.list-group-item
+                      dl
+                        dt movie release date
+                        dd - #{the_data.release_date}
+
+
