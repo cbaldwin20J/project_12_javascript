@@ -176,10 +176,11 @@ router.get('/movie/:access', (req, res) => {
   })
     .then(response => {
 
+      let soundtrack_object
       if(typeof response == 'undefined' || typeof response.data == 'undefined'){
-        res.json({response})
+        res.render('error', {token});
       }else{
-      let soundtrack_object = response.data.albums.items[0]
+       soundtrack_object = response.data.albums.items[0]
     }
 
       var options = { method: 'GET',
@@ -198,6 +199,10 @@ router.get('/movie/:access', (req, res) => {
         the_data = the_data.results[0]
 
 
+          if(typeof soundtrack_object == 'undefined' || typeof soundtrack_object.images[0] == 'undefined'){
+            res.render('error', {token})
+          }else{
+
 
         let instance = new Previous();
         instance.album_cover = soundtrack_object.images[0].url;
@@ -211,7 +216,7 @@ router.get('/movie/:access', (req, res) => {
           }
 
         });
-
+}
 
       });
 
