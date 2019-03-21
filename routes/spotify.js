@@ -73,7 +73,7 @@ router.get('/callback', function(req, res) {
 
   if (state === null || state !== storedState) {
     // ****************** need to update this to http://localhost:3000 or whatever express? is
-    res.render("error_page");
+    res.render("error");
   } else {
     res.clearCookie(stateKey);
     var authOptions = {
