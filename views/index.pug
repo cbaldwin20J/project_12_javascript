@@ -2,7 +2,7 @@ extends layout
 
 block content
   .container
-        .jumbotron.mt-5
+        .jumbotron
           .row
             .col.sm-6
               h1.display-4 Welcome!
@@ -18,3 +18,12 @@ block content
                 span#basic-addon3.input-group-text Ex: Godzilla
               input#title.form-control(type='text', name="title", aria-describedby='basic-addon3')
             input.btn.btn-primary.btn-lg(type='submit', value='Search')
+
+        h5.mb-4 previously searched films
+        .scrollmenu
+          each val in past_movies
+              div
+                h4 #{val.movie_name}
+                img.w-50(src="" + val.movie_poster alt="movie poster")
+                img.w-50(src="" + val.album_cover alt="album cover")
+

@@ -6,6 +6,8 @@ const url = require('url');
 const axios = require('axios');
 var request = require("request");
 
+var Previous = require('../models/previous');
+
 
 
 
@@ -147,15 +149,13 @@ router.get('/refresh_token/:refresh_token', function(req, res) {
       // here we want to send our access token to redux using json
       res.redirect("/home", {access_token, refresh_token});
 
+    }else{
+      res.render('error')
     }
   });
 });
 
-router.get('/erase/:access?/:refresh?', (req, res) => {
-  let access_token = req.params.access
-  let refresh_token = req.params.refresh
-  res.render("index", {access_token, refresh_token})
-})
+
 
 
 
@@ -175,7 +175,12 @@ router.get('/movie/:access', (req, res) => {
 
   })
     .then(response => {
+
+      if(typeof response == 'undefined' || typeof response.data == 'undefined'){
+        res.json({response})
+      }else{
       let soundtrack_object = response.data.albums.items[0]
+    }
 
       var options = { method: 'GET',
         url: 'https://api.themoviedb.org/3/search/movie',
@@ -188,18 +193,32 @@ router.get('/movie/:access', (req, res) => {
         body: '{}' };
 
       request(options, function (error, response, body) {
-        if (error) throw new Error(error);
+        if (error) res.render('error', {token});
         let the_data = JSON.parse(body)
         the_data = the_data.results[0]
 
-        res.render('movie', {soundtrack_object,the_data})
+
+
+        let instance = new Previous();
+        instance.album_cover = soundtrack_object.images[0].url;
+        instance.movie_poster = "http://image.tmdb.org/t/p/w185/" + the_data.poster_path
+        instance.movie_name = movie_query
+        instance.save(function (err) {
+          if(err){
+            res.render('error', {token})
+          }else{
+            res.render('movie', {soundtrack_object,the_data, token})
+          }
+
+        });
+
+
       });
 
 
     })
     .catch(error => {
-      console.log("spotify error was made")
-      res.status(404).json({ spotifyError: 'there was an error with spotify api call' })
+      res.render('error', {token})
     })
 
 });
