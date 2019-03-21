@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const url = require('url');
 
 const axios = require('axios');
+var request = require("request");
+
 
 
 
@@ -174,7 +176,26 @@ router.get('/movie/:access', (req, res) => {
   })
     .then(response => {
       let soundtrack_object = response.data.albums.items[0]
-      res.render('movie', {soundtrack_object})
+
+      var options = { method: 'GET',
+        url: 'https://api.themoviedb.org/3/search/movie',
+        qs:
+         { include_adult: 'false',
+           page: '1',
+           query: movie_query,
+           language: 'en-US',
+           api_key: '25a4c30966829481bd78912796c376bb' },
+        body: '{}' };
+
+      request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        let the_data = JSON.parse(body)
+        the_data = the_data.results[0]
+
+        res.render('movie', {soundtrack_object,the_data})
+      });
+
+
     })
     .catch(error => {
       console.log("spotify error was made")

@@ -2,12 +2,25 @@ extends layout
 
 block content
   h1 Spotify success page
-  p Welcome to #{soundtrack_object.name}
+  a(href='/home') Do another search
+
+  p album cover:
+  img(src="" + soundtrack_object.images[0].url + "" alt="album image")
+
+  p The soundtrack name: #{soundtrack_object.name}
   p album type: #{soundtrack_object.album_type}
   p artist: #{soundtrack_object.artists[0].name}
   p release date: #{soundtrack_object.release_date}
   p total tracks: #{soundtrack_object.total_tracks}
-  d
-    p album image:
-    img(src="" + soundtrack_object.images[0].url + "" alt="Image Title")
+  a(href="" + soundtrack_object.external_urls.spotify) listen to the tracks on spotify
+
+  p movie poster:
+  img(src="http://image.tmdb.org/t/p/w185/" + the_data.poster_path alt="movie poster")
+
+
+  p vote count on the movie: #{the_data.vote_count}
+  p the movie's vote average: #{the_data.vote_count}
+  p movie popularity: #{the_data.popularity}
+  p movie summary: #{the_data.overview}
+  p movie release data: #{the_data.release_date}
 

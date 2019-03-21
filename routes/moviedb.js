@@ -34,4 +34,4 @@ module.exports = router;
 
 
 
-//https://api.themoviedb.org/3/search/company?api_key=25a4c30966829481bd78912796c376bb&query=godzilla&page=1
+//https://developers.themoviedb.org/3/search/search-movies
