@@ -6,9 +6,7 @@ var logger = require('morgan');
 const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var spotifyRouter = require('./routes/spotify');
-var movieDBRouter = require('./routes/moviedb');
 
 
 mongoose.connect("mongodb://localhost:27017/course-api", {autoReconnect: true}, (err) => {
@@ -33,14 +31,13 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+// cookieParser is for the spotify api
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+// our routes
 app.use('', indexRouter);
-app.use('/users', usersRouter);
 app.use('/spotify', spotifyRouter);
-app.use('/moviedb', movieDBRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

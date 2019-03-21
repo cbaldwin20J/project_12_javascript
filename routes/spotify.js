@@ -1,22 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const url = require('url');
 
+const url = require('url');
 const axios = require('axios');
 var request = require("request");
-
-var Previous = require('../models/previous');
-
-
-
-
-
-
-var request = require('request'); // "Request" library
-
 var querystring = require('querystring');
 
+var Previous = require('../models/previous');
 
 var client_id = '3b59d301ecf448daa2fdd98eb479068e'; // Your client id
 var client_secret = '1521b9d1b78d48bd96eadce3b95091cb'; // Your secret
@@ -40,10 +31,8 @@ var generateRandomString = function(length) {
 
 var stateKey = 'spotify_auth_state';
 
-
-
-
-
+// /spotify/login
+// will login to Spotify's api
 router.get('/login', function(req, res) {
 
   var state = generateRandomString(16);
@@ -51,8 +40,8 @@ router.get('/login', function(req, res) {
 
   // your application requests authorization
   var scope = 'user-read-private user-read-email';
-  // ****** so here it looks like we finally get into the api stuff
-  // I believe after this is called it will redirect below to '/callback' automatically
+
+  // This will login to spotify and it will redirect to '/callback' automatically
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -61,12 +50,12 @@ router.get('/login', function(req, res) {
       redirect_uri: redirect_uri,
       state: state
     }));
+
 });
 
+// /spotify/callback
+// once logged in to Spotify, Spotify will send user to this route
 router.get('/callback', function(req, res) {
-
-  // your application requests refresh and access tokens
-  // after checking the state parameter
 
   // handling the response
   var code = req.query.code || null;
@@ -74,10 +63,10 @@ router.get('/callback', function(req, res) {
   var storedState = req.cookies ? req.cookies[stateKey] : null;
 
   if (state === null || state !== storedState) {
-    // ****************** need to update this to http://localhost:3000 or whatever express? is
     res.render("error");
   } else {
     res.clearCookie(stateKey);
+
     var authOptions = {
       url: 'https://accounts.spotify.com/api/token',
       form: {
@@ -91,7 +80,7 @@ router.get('/callback', function(req, res) {
       json: true
     };
 
-    // here is where we get our authorization code
+    // here is where we get our access token from Spotify
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
@@ -99,38 +88,29 @@ router.get('/callback', function(req, res) {
         var access_token = body.access_token,
             refresh_token = body.refresh_token;
 
-        // *** here I should json send both of these tokens to redux to keep in the store
-        //res.json({access_token, refresh_token})
-        console.log("access_token: " + access_token)
-        console.log("refresh_token: " + refresh_token)
-
-        let erase1 = "soundgarden"
-        let erase2 = "rules"
-
         let the_query = "/home/"+access_token+"/"+refresh_token
-        //res.render("index", {access_token, refresh_token});
+
+        //now we have our access token, redirect to the search page to begin
         res.redirect(the_query)
 
-
-
-
-
-        // we can also pass the token to the browser to make requests from there
-        // **** I don't think I need this because I'm not making api calls from redux
-
       } else {
+
         res.render("error");
 
       }
-    });
-  }
+
+    });// end of request.post
+
+  }// end of if/else
+
 });
 
+
+// /spotify/refresh_token
 // if my auth token doesn't work then trigger this route
 router.get('/refresh_token/:refresh_token', function(req, res) {
 
   // requesting access token from refresh token
-  // *** for me I will probably send it as a req.params.token from redux store
   var refresh_token = req.params.refresh_token;
   var authOptions = {
     url: 'https://accounts.spotify.com/api/token',
@@ -151,19 +131,22 @@ router.get('/refresh_token/:refresh_token', function(req, res) {
 
     }else{
       res.render('error')
+
     }
   });
 });
 
 
-
-
-
+// /spotify/movie/:access
+// when the user hits the search button it will go here to search spotify and themoviedb
 router.get('/movie/:access', (req, res) => {
 
+  // access token for spotify
   let token = req.params.access
-  movie_query = req.query.title
+  // the input text from the user's search request
+  let movie_query = req.query.title
 
+  // go to spotify and search for the movie's soundtrack
   axios({
       method: 'get',
         url: "https://api.spotify.com/v1/search?q=album%3A" + movie_query + "&type=album&market=us&limit=1",
@@ -172,11 +155,11 @@ router.get('/movie/:access', (req, res) => {
                     "Content-Type": "application/json",
                     "Authorization": "Bearer " + token
                 }
-
   })
     .then(response => {
 
       let soundtrack_object
+
       if(typeof response == 'undefined' || typeof response.data == 'undefined'){
         res.render('error', {token});
       }else{
@@ -193,39 +176,36 @@ router.get('/movie/:access', (req, res) => {
            api_key: '25a4c30966829481bd78912796c376bb' },
         body: '{}' };
 
+      // go to themoviedb.org api to get the movie info using the search input text
       request(options, function (error, response, body) {
         if (error) res.render('error', {token});
+
         let the_data = JSON.parse(body)
         the_data = the_data.results[0]
 
 
-          if(typeof soundtrack_object == 'undefined' || typeof soundtrack_object.images[0] == 'undefined'){
-            res.render('error', {token})
-          }else{
-
-
-        let instance = new Previous();
-        instance.album_cover = soundtrack_object.images[0].url;
-        instance.movie_poster = "http://image.tmdb.org/t/p/w185/" + the_data.poster_path
-        instance.movie_name = movie_query
-        instance.save(function (err) {
-          if(err){
-            res.render('error', {token})
-          }else{
-            res.render('movie', {soundtrack_object,the_data, token})
-          }
-
-        });
-}
-
-      });
-
-
+        if(typeof soundtrack_object == 'undefined' || typeof soundtrack_object.images[0] == 'undefined'){
+          res.render('error', {token})
+        }else{
+          // saving this search instance in the mongodb to be shown on the home page later
+          // as a previously searched movie
+          let instance = new Previous();
+          instance.album_cover = soundtrack_object.images[0].url;
+          instance.movie_poster = "http://image.tmdb.org/t/p/w185/" + the_data.poster_path
+          instance.movie_name = movie_query
+          instance.save(function (err) {
+            if(err){
+              res.render('error', {token})
+            }else{
+              res.render('movie', {soundtrack_object,the_data, token})
+            }
+          });
+        }// end of if/else
+      }); // end of request(options,
     })
     .catch(error => {
       res.render('error', {token})
     })
-
 });
 
 module.exports = router;

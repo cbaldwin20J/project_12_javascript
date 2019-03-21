@@ -1,4 +1,4 @@
-// the Review model
+// the Previous model
 
 var mongoose = require('mongoose');
 
